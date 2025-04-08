@@ -100,7 +100,7 @@ const DEFAULT_MERGE_FUNC: fn(&DMXData, &DMXData) -> Result<DMXData> =
 pub struct DMXData {
     /// The universe that the data was sent to.
     pub universe: u16,
-    
+
     /// The actual universe data, if less than 512 values in length then implies trailing 0's to pad to a full-universe of data.
     pub values: Vec<u8>,
 
@@ -125,26 +125,26 @@ pub struct DMXData {
 }
 
 /// Allows receiving dmx or other (different startcode) data using sacn.
-/// 
+///
 /// # Examples
 ///
 /// ```
 /// // Example showing creation of a receiver and receiving some data, as there is no sender this receiver then handles the timeout.
 /// use sacn::receive::SacnReceiver;
 /// use sacn::packet::ACN_SDT_MULTICAST_PORT;
-/// 
+///
 /// use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 /// use std::time::Duration;
-/// 
+///
 /// const UNIVERSE1: u16 = 1;
 /// const TIMEOUT: Option<Duration> = Some(Duration::from_secs(1)); // A timeout of None means blocking behaviour, some indicates the actual timeout.
-/// 
+///
 /// let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), ACN_SDT_MULTICAST_PORT);
 ///
 /// let mut dmx_rcv = SacnReceiver::with_ip(addr, None).unwrap();
 ///
 /// dmx_rcv.listen_universes(&[UNIVERSE1]).unwrap();
-/// 
+///
 /// match dmx_rcv.recv(TIMEOUT) {
 ///     Err(e) => {
 ///         // Print out the error.
@@ -250,7 +250,7 @@ struct UniversePage {
 }
 
 /// Allows debug ({:?}) printing of the SacnReceiver, used during debugging.
-///  
+///
 impl fmt::Debug for SacnReceiver {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self.receiver)?;
@@ -1788,7 +1788,7 @@ impl SequenceNumbering {
     /// #Arguments
     ///
     /// announce_timeout: A flag, if true it indicates than a UniverseTimeout error should be thrown if a universe times out on a source.
-    ///  
+    ///
     fn check_timeouts(&mut self, announce_timeout: bool) -> Result<()> {
         check_timeouts(
             &mut self.data_sequences,
@@ -1961,10 +1961,10 @@ fn check_seq_number(
         None => {
             // Previously checked that cid is present (and added if not), if None is returned now it indicates that between that check and this
             // function the cid key value has been removed. This can only happen if there is a memory corruption/thread-interleaving or similar external
-            // event which the receiver cannot be expected to handle / doesn't support. 
+            // event which the receiver cannot be expected to handle / doesn't support.
             // The rust typing system forces this possibility to be acknowledged when in some languages this possibility would still exist but it would be hidden
-            // within the code. 
-            // While a panic!() call here isn't ideal it shows the strength in the explictness of the rust system and points to an area of 
+            // within the code.
+            // While a panic!() call here isn't ideal it shows the strength in the explictness of the rust system and points to an area of
             // potential later improvement within the code by not hiding the problem. As normal if the panic must be caught then rust allows this later on by utilising
             // a mechanism such as catch unwind https://doc.rust-lang.org/std/panic/fn.catch_unwind.html.
             // Another possibility here could be to retry the method but this could end with an infinite loop.
@@ -2015,7 +2015,7 @@ fn check_seq_number(
 ///
 /// timeout: The exclusive length of time permitted since a source last sent on a universe.
 ///     If the time elapsed since the last received data that is equal to or great than the timeout then the source is said to have timed out.
-///  
+///
 fn check_timeouts(
     src_sequences: &mut HashMap<Uuid, HashMap<u16, TimedStampedSeqNo>>,
     timeout: Duration,
@@ -2612,7 +2612,7 @@ mod test {
     /// The receiver is then given a data packet with sequence number 0 which is the lower than the expected value of 2 so should be rejected.
     ///
     /// This shows that sequence numbers are correctly evaluated and packets rejected if the sequence number is too low for data packets.
-    ///  
+    ///
     #[test]
     fn test_data_packet_sequence_number_below_expected() {
         const UNIVERSE1: u16 = 1;
@@ -2749,7 +2749,7 @@ mod test {
                         assert!(
                             false,
                             "Data packet with sequence number: {} was rejected incorrectly",
-                                i
+                            i
                         );
                     }
                 }
@@ -2758,8 +2758,8 @@ mod test {
                     if (diff <= REJECT_RANGE_UPPER_BOUND) && (diff > REJECT_RANGE_LOWER_BOUND) {
                         assert!(
                             false,
-                            "Data packet with sequence number: {} was accepted incorrectly", 
-                                1
+                            "Data packet with sequence number: {} was accepted incorrectly",
+                            1
                         );
                     } else {
                         assert!(
@@ -2784,7 +2784,7 @@ mod test {
     /// As shown by test_sequence_number_packet_type_independence sequence numbers are treated independently for data and synchronisation packets so
     /// therefore appropriate to test separately. Could have been combined with the data packet variant of this test but by keeping them separate
     /// it more clearly shows that data and sync packet sequence numbers should be treated independently and it report errors independently.
-    ///  
+    ///
     #[test]
     fn test_sync_packet_sequence_number_exhaustive() {
         const SYNC_ADDR: u16 = 1;
@@ -2891,7 +2891,7 @@ mod test {
     /// The receiver is then given a sync packet with sequence number 0 which is the lower than the expected value of 2 so should be rejected.
     ///
     /// This shows that sequence numbers are correctly evaluated and packets rejected if the sequence number is too low for synchronisation packets.
-    ///  
+    ///
     #[test]
     fn test_sync_packet_sequence_number_below_expected() {
         const UNIVERSE1: u16 = 1;
@@ -2950,9 +2950,9 @@ mod test {
     /// Creates a receiver and then makes it handle 2 sync packets with sequence numbers 0 and 1 respectively.
     /// The receiver then resets the sequence number counters and then handles a sync packet with sequence number 0. This would normally be rejected
     /// as per test_sync_packet_sequence_number_below_expected but because of the reset it shouldn't be.
-    /// 
+    ///
     /// This checks that the sync packet sequence numbers are reset correctly.
-    /// 
+    ///
     #[test]
     fn test_sync_packet_sequence_number_reset() {
         const UNIVERSE1: u16 = 1;
@@ -3002,9 +3002,9 @@ mod test {
     /// Creates a receiver and then makes it handle 2 data packets with sequence numbers 0 and 1 respectively.
     /// The receiver then resets the sequence number counters and then handles a data packet with sequence number 0. This would normally be rejected
     /// as per test_data_packet_sequence_number_below_expected but because of the reset it shouldn't be.
-    /// 
+    ///
     /// This checks that the data packet sequence numbers are reset correctly.
-    /// 
+    ///
     #[test]
     fn test_data_packet_sequence_number_reset() {
         const UNIVERSE1: u16 = 1;
@@ -3220,16 +3220,16 @@ mod test {
         match SacnReceiver::with_ip(addr, source_limit) {
             Err(e) => match e.kind() {
                 ErrorKind::Io(x) => match x.kind() {
-                            std::io::ErrorKind::InvalidInput => {
-                                assert!(true, "Correct error returned");
-                            }
-                            _ => {
-                                assert!(false, "Expected error returned");
-                            }
-                },
-                    _ => {
-                        assert!(false, "Unexpected error type returned");
+                    std::io::ErrorKind::InvalidInput => {
+                        assert!(true, "Correct error returned");
                     }
+                    _ => {
+                        assert!(false, "Expected error returned");
+                    }
+                },
+                _ => {
+                    assert!(false, "Unexpected error type returned");
+                }
             },
             _ => {
                 assert!(
@@ -3273,7 +3273,7 @@ mod test {
 
         let data: DMXData = DMXData {
             universe: 0,
-            values: vec![1,2,3],
+            values: vec![1, 2, 3],
             sync_uni: SYNC_ADDR,
             priority: 100,
             src_cid: Some(Uuid::new_v4()),
@@ -3335,7 +3335,7 @@ mod test {
             .handle_sync_packet(
                 Uuid::new_v4(),
                 SynchronizationPacketFramingLayer {
-            sequence_number: 0,
+                    sequence_number: 0,
                     synchronization_address: 1,
                 },
             )
@@ -3364,7 +3364,7 @@ mod test {
             preview: PREVIEW,
             recv_timestamp: Instant::now(),
         };
-        
+
         let data2 = DMXData {
             universe: UNIVERSE,
             values: values,
